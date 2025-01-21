@@ -13,6 +13,11 @@
     "@aws-sdk/client-apigatewayv2": "^3.731.1",
     "@aws-sdk/client-dynamodb": "^3.731.1",
     "@aws-sdk/client-lambda": "^3.731.1",
+    "@types/aws-lambda": "^8.10.147",
+    "module-alias": "^2.2.3",
     "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7"
   }
 }
