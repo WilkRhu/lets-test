@@ -3,19 +3,19 @@ export interface Address {
     city: string;
     state: string;
     zip: string;
-}
-
-export interface Contact {
+  }
+  
+  export interface Contact {
     email: string;
     phone: string;
     isPrimary: boolean;
-}
-
-export interface User {
+  }
+  
+  export interface Customer {
     id: string;
-    fullName: string;
-    dateOfBirth: string;
+    name: string;
+    birthDate: string;
     isActive: boolean;
     addresses: Address[];
     contacts: Contact[];
-}
+  }
