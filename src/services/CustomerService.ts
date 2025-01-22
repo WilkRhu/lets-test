@@ -1,36 +1,134 @@
-import { Customer, Address, Contact } from '../models/Customer';
-import { putItem, getItem, deleteItem, updateItem } from '../utils/dynamoDB';
+import { Customer } from "../models/Customer";
+import {
+  deleteItem,
+  getAllItems,
+  getItem,
+  putItem,
+  updateItem,
+} from "../utils/dynamoDB";
+import {
+  convertFromDynamoFormat,
+  convertToDynamoFormat,
+} from "../utils/dynamoDBConverter";
+import { v4 as uuidv4 } from "uuid";
 
-const TABLE_NAME = process.env.CUSTOMER_TABLE_NAME!;
+export const createCustomer = async (customerData: Customer) => {
+  const customerId = uuidv4();
+  const customerWithId = { ...customerData, id: customerId };
 
-export class CustomerService {
-  static async createCustomer(customer: Customer) {
-    await putItem(TABLE_NAME, {
-      id: { S: customer.id },
-      name: { S: customer.name },
-      birthDate: { S: customer.birthDate },
-      isActive: { BOOL: customer.isActive },
-      addresses: { L: customer.addresses.map(address => ({ M: address })) },
-      contacts: { L: customer.contacts.map(contact => ({ M: contact })) }
-    });
-  }
+  const dynamoItem = convertToDynamoFormat(customerWithId);
 
-  static async getCustomer(id: string) {
-    const result = await getItem(TABLE_NAME, { id: { S: id } });
-    return result ? result : null;
-  }
-
-  static async updateCustomer(id: string, customer: Partial<Customer>) {
-    const expression = 'set #name = :name, #birthDate = :birthDate, #isActive = :isActive';
-    const expressionValues = {
-      ':name': { S: customer.name || '' },
-      ':birthDate': { S: customer.birthDate || '' },
-      ':isActive': { BOOL: customer.isActive !== undefined ? customer.isActive : true }
+  try {
+    await putItem("Customers", dynamoItem);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "Customer created successfully",
+        customer: customerWithId,
+      }),
     };
-    await updateItem(TABLE_NAME, { id: { S: id } }, expression, expressionValues);
+  } catch (error) {
+    console.error("Error creating customer:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Failed to create customer", error }),
+    };
   }
+};
 
-  static async deleteCustomer(id: string) {
-    await deleteItem(TABLE_NAME, { id: { S: id } });
+export const getAllItemService = async (tableName: string) => {
+  try {
+    const items = await getAllItems(tableName);
+
+    if (items.length === 0) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: "Nenhum item encontrado." }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      body: items,
+    };
+  } catch (error) {
+    console.error("Erro ao recuperar os itens:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Erro ao recuperar os itens",
+        error: error,
+      }),
+    };
   }
-}
+};
+
+export const getItemService = async (tableName: string, key: any) => {
+  try {
+    const id = { id: { S: `${key}` } };
+    const item = await getItem(tableName, id);
+    if (!item) {
+      return { statusCode: 404, message: "Item not found" };
+    }
+
+    return { statusCode: 200, item };
+  } catch (error) {
+    console.error("Error in getItemService:", error);
+    return { statusCode: 500, message: "Failed to retrieve item", error };
+  }
+};
+
+export const deleteCustomerService = async (customerId: string) => {
+  try {
+    const key = { id: { S: customerId } };
+
+    await deleteItem("Customers", key);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: `Cliente com id ${customerId} deletado com sucesso.`,
+      }),
+    };
+  } catch (error) {
+    console.error("Erro ao deletar o item:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: `Erro ao tentar deletar o cliente com id ${customerId}.`,
+        error: error,
+      }),
+    };
+  }
+};
+
+export const updateCustomerService = async (customerId: string, updatedData: any) => {
+  try {
+    const key = { id: { S: `${customerId}` } };
+    
+    // Chamando a função de atualização com os dados fornecidos
+    const updatedAttributes = await updateItem(
+      "Customers",
+      key,
+      updatedData
+    );
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: `Cliente com id ${customerId} atualizado com sucesso.`,
+        updatedAttributes,
+      }),
+    };
+  } catch (error) {
+    console.error('Erro ao atualizar o cliente:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: `Erro ao tentar atualizar o cliente com id ${customerId}.`,
+        error: `${error}`,
+      }),
+    };
+  }
+};
+

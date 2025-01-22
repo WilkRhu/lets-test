@@ -1,34 +1,118 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerService = void 0;
+exports.updateCustomerService = exports.deleteCustomerService = exports.getItemService = exports.getAllItemService = exports.createCustomer = void 0;
 const dynamoDB_1 = require("../utils/dynamoDB");
-const TABLE_NAME = process.env.CUSTOMER_TABLE_NAME;
-class CustomerService {
-    static async createCustomer(customer) {
-        await (0, dynamoDB_1.putItem)(TABLE_NAME, {
-            id: { S: customer.id },
-            name: { S: customer.name },
-            birthDate: { S: customer.birthDate },
-            isActive: { BOOL: customer.isActive },
-            addresses: { L: customer.addresses.map(address => ({ M: address })) },
-            contacts: { L: customer.contacts.map(contact => ({ M: contact })) }
-        });
-    }
-    static async getCustomer(id) {
-        const result = await (0, dynamoDB_1.getItem)(TABLE_NAME, { id: { S: id } });
-        return result ? result : null;
-    }
-    static async updateCustomer(id, customer) {
-        const expression = 'set #name = :name, #birthDate = :birthDate, #isActive = :isActive';
-        const expressionValues = {
-            ':name': { S: customer.name || '' },
-            ':birthDate': { S: customer.birthDate || '' },
-            ':isActive': { BOOL: customer.isActive !== undefined ? customer.isActive : true }
+const dynamoDBConverter_1 = require("../utils/dynamoDBConverter");
+const uuid_1 = require("uuid");
+const createCustomer = async (customerData) => {
+    const customerId = (0, uuid_1.v4)();
+    const customerWithId = { ...customerData, id: customerId };
+    const dynamoItem = (0, dynamoDBConverter_1.convertToDynamoFormat)(customerWithId);
+    try {
+        await (0, dynamoDB_1.putItem)("Customers", dynamoItem);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: "Customer created successfully",
+                customer: customerWithId,
+            }),
         };
-        await (0, dynamoDB_1.updateItem)(TABLE_NAME, { id: { S: id } }, expression, expressionValues);
     }
-    static async deleteCustomer(id) {
-        await (0, dynamoDB_1.deleteItem)(TABLE_NAME, { id: { S: id } });
+    catch (error) {
+        console.error("Error creating customer:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: "Failed to create customer", error }),
+        };
     }
-}
-exports.CustomerService = CustomerService;
+};
+exports.createCustomer = createCustomer;
+const getAllItemService = async (tableName) => {
+    try {
+        const items = await (0, dynamoDB_1.getAllItems)(tableName);
+        if (items.length === 0) {
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ message: "Nenhum item encontrado." }),
+            };
+        }
+        return {
+            statusCode: 200,
+            body: items,
+        };
+    }
+    catch (error) {
+        console.error("Erro ao recuperar os itens:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: "Erro ao recuperar os itens",
+                error: error,
+            }),
+        };
+    }
+};
+exports.getAllItemService = getAllItemService;
+const getItemService = async (tableName, key) => {
+    try {
+        const id = { id: { S: `${key}` } };
+        const item = await (0, dynamoDB_1.getItem)(tableName, id);
+        if (!item) {
+            return { statusCode: 404, message: "Item not found" };
+        }
+        return { statusCode: 200, item };
+    }
+    catch (error) {
+        console.error("Error in getItemService:", error);
+        return { statusCode: 500, message: "Failed to retrieve item", error };
+    }
+};
+exports.getItemService = getItemService;
+const deleteCustomerService = async (customerId) => {
+    try {
+        const key = { id: { S: customerId } };
+        await (0, dynamoDB_1.deleteItem)("Customers", key);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: `Cliente com id ${customerId} deletado com sucesso.`,
+            }),
+        };
+    }
+    catch (error) {
+        console.error("Erro ao deletar o item:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: `Erro ao tentar deletar o cliente com id ${customerId}.`,
+                error: error,
+            }),
+        };
+    }
+};
+exports.deleteCustomerService = deleteCustomerService;
+const updateCustomerService = async (customerId, updatedData) => {
+    try {
+        const key = { id: { S: `${customerId}` } };
+        // Chamando a função de atualização com os dados fornecidos
+        const updatedAttributes = await (0, dynamoDB_1.updateItem)("Customers", key, updatedData);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: `Cliente com id ${customerId} atualizado com sucesso.`,
+                updatedAttributes,
+            }),
+        };
+    }
+    catch (error) {
+        console.error('Erro ao atualizar o cliente:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: `Erro ao tentar atualizar o cliente com id ${customerId}.`,
+                error: `${error}`,
+            }),
+        };
+    }
+};
+exports.updateCustomerService = updateCustomerService;
