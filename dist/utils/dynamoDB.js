@@ -4,10 +4,10 @@ exports.updateItem = exports.deleteItem = exports.getItem = exports.putItem = vo
 const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const client = new client_dynamodb_1.DynamoDBClient({
     region: "us-east-1",
-    endpoint: "http://0.0.0.0:8000",
+    endpoint: process.env.DYNAMODB_ENDPOINT || "http://dynamodb-local:8000",
     credentials: {
-        accessKeyId: "fakeMyKeyId", // Chave fictícia
-        secretAccessKey: "fakeSecretAccessKey", // Chave secreta fictícia
+        accessKeyId: "fakeMyKeyId",
+        secretAccessKey: "fakeSecretAccessKey",
     },
 });
 const putItem = async (tableName, item) => {

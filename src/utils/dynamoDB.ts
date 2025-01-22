@@ -8,10 +8,10 @@ import {
 
 const client = new DynamoDBClient({
   region: "us-east-1",
-  endpoint: "http://0.0.0.0:8000",
+  endpoint: process.env.DYNAMODB_ENDPOINT || "http://dynamodb-local:8000", 
   credentials: {
-    accessKeyId: "fakeMyKeyId", // Chave fictícia
-    secretAccessKey: "fakeSecretAccessKey", // Chave secreta fictícia
+    accessKeyId: "fakeMyKeyId",
+    secretAccessKey: "fakeSecretAccessKey",
   },
 });
 

@@ -5,10 +5,263 @@
     "isWithinCompose": false,
     "composeOrgName": null,
     "composeServiceName": null,
-    "command": [],
+    "command": [
+      "login"
+    ],
     "options": {},
-    "error": null,
-    "machineId": "6f2c8ccd771501b05d3a8443a17ea77b",
+    "error": {
+      "message": "Unable to login in non-interactive mode. Please use a license key or access key, both of which you can get from the Serverless Framework Dashboard: https://app.serverless.com",
+      "stack": "Error: Unable to login in non-interactive mode. Please use a license key or access key, both of which you can get from the Serverless Framework Dashboard: https://app.serverless.com\n    at Authentication.authenticate (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:688:9039)\n    at commandLogin (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:964:8564)\n    at runCommand (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:10881)\n    at route (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:13430)\n    at async Object.run2 [as run] (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:15173)\n    at async run3 (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:16435)"
+    },
+    "machineId": "24a07e472dc513bc8c568d1cd10de1c4",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  },
+  "/app": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.19",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeServiceName": null,
+    "servicePath": "/app",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "org": "wilkcaetano",
+      "service": "customer-api",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "us-east-1"
+      },
+      "plugins": [
+        "serverless-offline",
+        "serverless-dynamodb-local"
+      ],
+      "custom": {
+        "dynamodb": {
+          "stages": [
+            "dev"
+          ],
+          "start": {
+            "port": 8000,
+            "inMemory": true,
+            "migrate": true
+          }
+        }
+      },
+      "functions": {
+        "createCustomer": {
+          "handler": "src/handlers/createCustomer.createCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers",
+                "method": "post"
+              }
+            }
+          ]
+        },
+        "getCustomer": {
+          "handler": "src/handlers/getCustomer.getCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers/{id}",
+                "method": "get"
+              }
+            }
+          ]
+        },
+        "updateCustomer": {
+          "handler": "src/handlers/updateCustomer.updateCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers/{id}",
+                "method": "put"
+              }
+            }
+          ]
+        },
+        "deleteCustomer": {
+          "handler": "src/handlers/deleteCustomer.deleteCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers/{id}",
+                "method": "delete"
+              }
+            }
+          ]
+        }
+      },
+      "resources": {
+        "Resources": {
+          "CustomersTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "customers",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "id",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "id",
+                  "KeyType": "HASH"
+                }
+              ],
+              "ProvisionedThroughput": {
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\norg: wilkcaetano\nservice: customer-api\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: us-east-1\n\nplugins:\n  - serverless-offline\n  - serverless-dynamodb-local\n  \ncustom:\n  dynamodb:\n    stages:\n      - dev\n    start:\n      port: 8000\n      inMemory: true\n      migrate: true  \n\nfunctions:\n  createCustomer:\n    handler: src/handlers/createCustomer.createCustomer\n    events:\n      - http:\n          path: customers\n          method: post\n\n  getCustomer:\n    handler: src/handlers/getCustomer.getCustomer\n    events:\n      - http:\n          path: customers/{id}\n          method: get\n\n  updateCustomer:\n    handler: src/handlers/updateCustomer.updateCustomer\n    events:\n      - http:\n          path: customers/{id}\n          method: put\n\n  deleteCustomer:\n    handler: src/handlers/deleteCustomer.deleteCustomer\n    events:\n      - http:\n          path: customers/{id}\n          method: delete\n\n\nresources:\n  Resources:\n    CustomersTable:\n      Type: AWS::DynamoDB::Table\n      Properties:\n        TableName: customers\n        AttributeDefinitions:\n          - AttributeName: id\n            AttributeType: S\n        KeySchema:\n          - AttributeName: id\n            KeyType: HASH\n        ProvisionedThroughput:\n          ReadCapacityUnits: 5\n          WriteCapacityUnits: 5",
+    "command": [
+      "offline",
+      "start"
+    ],
+    "options": {},
+    "error": {
+      "message": "You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".",
+      "stack": "Error: You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".\n    at Authentication.getAuthenticatedData (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:686:10803)\n    at async Authentication.resolverAuthenticate (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:688:20566)\n    at async _Meta.authenticate (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:696:12154)\n    at async _Meta.authenticateAndResolve (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:696:11738)\n    at async route (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:14685)\n    at async Object.run2 [as run] (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:15173)\n    at async run3 (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:16435)"
+    },
+    "machineId": "85eccd298c7900fa8a86df429ea1972a",
+    "stage": "dev",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  },
+  "/usr/src/app": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.19",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeServiceName": null,
+    "servicePath": "/usr/src/app",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "org": "wilkcaetano",
+      "service": "customer-api",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "us-east-1"
+      },
+      "plugins": [
+        "serverless-offline",
+        "serverless-dynamodb-local"
+      ],
+      "custom": {
+        "dynamodb": {
+          "stages": [
+            "dev"
+          ],
+          "start": {
+            "port": 8000,
+            "inMemory": true,
+            "migrate": true
+          }
+        }
+      },
+      "functions": {
+        "createCustomer": {
+          "handler": "src/handlers/createCustomer.createCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers",
+                "method": "post"
+              }
+            }
+          ]
+        },
+        "getCustomer": {
+          "handler": "src/handlers/getCustomer.getCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers/{id}",
+                "method": "get"
+              }
+            }
+          ]
+        },
+        "updateCustomer": {
+          "handler": "src/handlers/updateCustomer.updateCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers/{id}",
+                "method": "put"
+              }
+            }
+          ]
+        },
+        "deleteCustomer": {
+          "handler": "src/handlers/deleteCustomer.deleteCustomer",
+          "events": [
+            {
+              "http": {
+                "path": "customers/{id}",
+                "method": "delete"
+              }
+            }
+          ]
+        }
+      },
+      "resources": {
+        "Resources": {
+          "CustomersTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "customers",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "id",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "id",
+                  "KeyType": "HASH"
+                }
+              ],
+              "ProvisionedThroughput": {
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "serviceRawFile": "# \"org\" ensures this Service is used with the correct Serverless Framework Access Key.\norg: wilkcaetano\nservice: customer-api\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: us-east-1\n\nplugins:\n  - serverless-offline\n  - serverless-dynamodb-local\n  \ncustom:\n  dynamodb:\n    stages:\n      - dev\n    start:\n      port: 8000\n      inMemory: true\n      migrate: true  \n\nfunctions:\n  createCustomer:\n    handler: src/handlers/createCustomer.createCustomer\n    events:\n      - http:\n          path: customers\n          method: post\n\n  getCustomer:\n    handler: src/handlers/getCustomer.getCustomer\n    events:\n      - http:\n          path: customers/{id}\n          method: get\n\n  updateCustomer:\n    handler: src/handlers/updateCustomer.updateCustomer\n    events:\n      - http:\n          path: customers/{id}\n          method: put\n\n  deleteCustomer:\n    handler: src/handlers/deleteCustomer.deleteCustomer\n    events:\n      - http:\n          path: customers/{id}\n          method: delete\n\n\nresources:\n  Resources:\n    CustomersTable:\n      Type: AWS::DynamoDB::Table\n      Properties:\n        TableName: customers\n        AttributeDefinitions:\n          - AttributeName: id\n            AttributeType: S\n        KeySchema:\n          - AttributeName: id\n            KeyType: HASH\n        ProvisionedThroughput:\n          ReadCapacityUnits: 5\n          WriteCapacityUnits: 5",
+    "command": [
+      "offline",
+      "start"
+    ],
+    "options": {},
+    "error": {
+      "message": "You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".",
+      "stack": "Error: You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".\n    at Authentication.getAuthenticatedData (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:686:10803)\n    at async Authentication.resolverAuthenticate (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:688:20566)\n    at async _Meta.authenticate (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:696:12154)\n    at async _Meta.authenticateAndResolve (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:696:11738)\n    at async route (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:14685)\n    at async Object.run2 [as run] (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:15173)\n    at async run3 (file:///root/.serverless/releases/4.4.19/package/dist/sf-core.js:1010:16435)"
+    },
+    "machineId": "e2cdc63055a7c4c595e2b592cd6abdaa",
+    "stage": "dev",
     "serviceProviderAwsCfStackId": null,
     "serviceProviderAwsCfStackCreated": null,
     "serviceProviderAwsCfStackUpdated": null,

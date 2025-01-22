@@ -1,10 +1,13 @@
 import { putItem } from "../utils/dynamoDB";
+import { v4 as uuidv4 } from "uuid";
 
 export const createCustomer = async (event: any) => {
   const body = JSON.parse(event.body);
 
+  const customerId = uuidv4();
+
   const item = {
-    id: { S: body.id },
+    id: { S: customerId },
     name: { S: body.name },
     birthDate: { S: body.birthDate },
     isActive: { BOOL: body.isActive },
@@ -33,7 +36,17 @@ export const createCustomer = async (event: any) => {
     await putItem('Customers', item);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Customer created successfully' }),
+      body: JSON.stringify({
+        message: 'Customer created successfully',
+        customer: {
+          id: customerId,
+          name: body.name,
+          birthDate: body.birthDate,
+          isActive: body.isActive,
+          addresses: body.addresses,
+          contacts: body.contacts,
+        }
+      }),
     };
   } catch (error) {
     console.error('Error creating customer:', error);

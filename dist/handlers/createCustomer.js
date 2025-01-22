@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCustomer = void 0;
 const dynamoDB_1 = require("../utils/dynamoDB");
+const uuid_1 = require("uuid");
 const createCustomer = async (event) => {
     const body = JSON.parse(event.body);
+    const customerId = (0, uuid_1.v4)();
     const item = {
-        id: { S: body.id },
+        id: { S: customerId },
         name: { S: body.name },
         birthDate: { S: body.birthDate },
         isActive: { BOOL: body.isActive },
@@ -33,7 +35,17 @@ const createCustomer = async (event) => {
         await (0, dynamoDB_1.putItem)('Customers', item);
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: 'Customer created successfully' }),
+            body: JSON.stringify({
+                message: 'Customer created successfully',
+                customer: {
+                    id: customerId,
+                    name: body.name,
+                    birthDate: body.birthDate,
+                    isActive: body.isActive,
+                    addresses: body.addresses,
+                    contacts: body.contacts,
+                }
+            }),
         };
     }
     catch (error) {

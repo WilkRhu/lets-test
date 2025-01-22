@@ -1,0 +1,18 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"  # Mapeia a porta 3000 do contêiner para a porta local
+    environment:
+      - NODE_ENV=development  # Definir variáveis de ambiente, se necessário
+    volumes:
+      - .:/usr/src/app  # Para garantir que o código seja sincronizado com o contêiner
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    ports:
+      - "8000:8000"  # Expondo a porta do DynamoDB local
+    environment:
+      - DB_NAME=Customers
