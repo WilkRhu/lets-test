@@ -5,10 +5,10 @@ const CustomerService_1 = require("../services/CustomerService");
 const getCustomerHandler = async (event) => {
     const customerId = event.pathParameters.id; // Obtém o ID da URL (por exemplo, /customer/{id})
     try {
-        const response = await (0, CustomerService_1.getItemService)("Customers", customerId);
+        const response = await (0, CustomerService_1.getItemService)("Customers", { id: customerId });
         return {
             statusCode: response.statusCode,
-            body: JSON.stringify(response.item),
+            body: response.item,
         };
     }
     catch (error) {

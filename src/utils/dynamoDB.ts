@@ -4,16 +4,81 @@ import {
   GetItemCommand,
   DeleteItemCommand,
   UpdateItemCommand,
+  ListTablesCommand,
+  CreateTableCommand,
+  ScanCommand,
 } from "@aws-sdk/client-dynamodb";
+import { createUpdateExpression } from "./dynamoDBConverter";
+
+const formatDynamoValue = (value: any) => {
+  if (typeof value === "string") return { S: value };
+  if (typeof value === "boolean") return { BOOL: value };
+  if (typeof value === "number") return { N: value.toString() };
+  if (Array.isArray(value)) return { L: value.map((v) => ({ S: v })) };
+  if (typeof value === "object") return { M: value };
+  return null;
+};
 
 const client = new DynamoDBClient({
-  region: "us-east-1",
-  endpoint: "http://0.0.0.0:8000",
+  region: "us-east-2",
+  endpoint: process.env.DYNAMODB_ENDPOINT || "http://localhost:8000",
   credentials: {
-    accessKeyId: "fakeMyKeyId", // Chave fictícia
-    secretAccessKey: "fakeSecretAccessKey", // Chave secreta fictícia
+    accessKeyId: "fakeMyKeyId",
+    secretAccessKey: "fakeSecretAccessKey",
   },
 });
+
+const testConnection = async () => {
+  try {
+    const data = await client.send(new ListTablesCommand({}));
+    console.log(
+      "Conectado ao DynamoDB Local com sucesso! Tabelas:",
+      data.TableNames
+    );
+  } catch (error) {
+    console.error("Erro ao conectar com o DynamoDB Local:", error);
+  }
+};
+
+const createTableIfNotExist = async (tableName: string) => {
+  try {
+    const listTablesCommand = new ListTablesCommand({});
+    const data = await client.send(listTablesCommand);
+
+    // Verificar se a tabela já existe
+    if (data.TableNames && data.TableNames.includes(tableName)) {
+      console.log(`A tabela "${tableName}" já existe.`);
+      return;
+    }
+
+    const createTableCommand = new CreateTableCommand({
+      TableName: tableName,
+      KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
+      AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5,
+      },
+    });
+
+    await client.send(createTableCommand);
+    console.log(`Tabela "${tableName}" criada com sucesso.`);
+  } catch (error) {
+    console.error(`Erro ao criar a tabela "${tableName}":`, error);
+  }
+};
+
+const createTablesIfNotExist = async (tableNames: string[]) => {
+  for (const tableName of tableNames) {
+    await createTableIfNotExist(tableName);
+  }
+};
+
+const tablesToCreate = ["Customers"];
+
+testConnection();
+
+createTablesIfNotExist(tablesToCreate);
 
 export const putItem = async (tableName: string, item: any) => {
   try {
@@ -25,6 +90,27 @@ export const putItem = async (tableName: string, item: any) => {
     console.log(`Item inserted into ${tableName}`);
   } catch (error) {
     console.error("Error inserting item:", error);
+  }
+};
+
+export const getAllItems = async (tableName: string) => {
+  try {
+    const scanCommand = new ScanCommand({
+      TableName: tableName,
+    });
+
+    const data = await client.send(scanCommand);
+
+    if (data.Items) {
+      console.log("Itens encontrados:", data.Items);
+      return data.Items;
+    } else {
+      console.log("Nenhum item encontrado na tabela.");
+      return [];
+    }
+  } catch (error) {
+    console.error("Erro ao obter itens da tabela:", error);
+    return [];
   }
 };
 
@@ -48,14 +134,32 @@ export const deleteItem = async (tableName: string, key: any) => {
 export const updateItem = async (
   tableName: string,
   key: any,
-  updateExpression: string,
-  expressionValues: any
+  updateValues: any
 ) => {
+  let updateExpression = "set";
+  const expressionAttributeValues: any = {};
+  const expressionAttributeNames: any = {};
+
+  updateExpression = createUpdateExpression(
+    updateValues,
+    expressionAttributeNames,
+    expressionAttributeValues
+  );
+
   const command = new UpdateItemCommand({
     TableName: tableName,
     Key: key,
     UpdateExpression: updateExpression,
-    ExpressionAttributeValues: expressionValues,
+    ExpressionAttributeValues: expressionAttributeValues,
+    ExpressionAttributeNames: expressionAttributeNames,
+    ReturnValues: "ALL_NEW",
   });
-  await client.send(command);
+
+  try {
+    const result = await client.send(command);
+    return result.Attributes;
+  } catch (error) {
+    console.error("Erro ao atualizar item:", error);
+    throw new Error("Erro ao atualizar item");
+  }
 };

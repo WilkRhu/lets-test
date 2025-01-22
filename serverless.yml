@@ -22,28 +22,36 @@ custom:
 
 functions:
   createCustomer:
-    handler: src/handlers/createCustomer.createCustomer
+    handler: src/handlers/createCustomer.handleCreateCustomer
     events:
       - http:
           path: customers
           method: post
 
+  getAllCustomer:
+    handler: src/handlers/getAllCustomer.getAllHandler
+    events:
+      - http:
+          path: customers
+          method: get        
+
   getCustomer:
-    handler: src/handlers/getCustomer.getCustomer
+    handler: src/handlers/getCustomer.getCustomerHandler
     events:
       - http:
           path: customers/{id}
           method: get
 
   updateCustomer:
-    handler: src/handlers/updateCustomer.updateCustomer
+    handler: src/handlers/updateCustomer.updateItemHandler
+    timeout: 60
     events:
       - http:
           path: customers/{id}
-          method: put
+          method: patch
 
   deleteCustomer:
-    handler: src/handlers/deleteCustomer.deleteCustomer
+    handler: src/handlers/deleteCustomer.deletItemHandler
     events:
       - http:
           path: customers/{id}
