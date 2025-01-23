@@ -5,7 +5,7 @@ import {
   getItem,
   putItem,
   updateItem,
-} from "../utils/dynamoDB";
+} from "../database/dynamoDB";
 import {
   convertFromDynamoFormat,
   convertToDynamoFormat,

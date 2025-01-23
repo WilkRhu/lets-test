@@ -8,7 +8,7 @@ import {
   CreateTableCommand,
   ScanCommand,
 } from "@aws-sdk/client-dynamodb";
-import { createUpdateExpression } from "./dynamoDBConverter";
+import { createUpdateExpression } from "../utils/dynamoDBConverter";
 
 const formatDynamoValue = (value: any) => {
   if (typeof value === "string") return { S: value };

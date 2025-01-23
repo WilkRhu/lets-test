@@ -1,5 +1,5 @@
 import { deleteCustomerService } from "../../../services/CustomerService";
-import { deleteItem } from "../../../utils/dynamoDB"; // Importando o mock do repositório
+import { deleteItem } from "../../../database/dynamoDB"; // Importando o mock do repositório
 
 jest.mock("../../../utils/dynamoDB", () => ({
   deleteItem: jest.fn(),

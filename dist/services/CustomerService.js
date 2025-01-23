@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateCustomerService = exports.deleteCustomerService = exports.getItemService = exports.getAllItemService = exports.createCustomer = void 0;
-const dynamoDB_1 = require("../utils/dynamoDB");
+const dynamoDB_1 = require("../database/dynamoDB");
 const dynamoDBConverter_1 = require("../utils/dynamoDBConverter");
 const uuid_1 = require("uuid");
 const createCustomer = async (customerData) => {

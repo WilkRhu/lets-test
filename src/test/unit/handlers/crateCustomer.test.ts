@@ -1,6 +1,6 @@
 
 import { v4 as uuidv4 } from "uuid";
-import * as dynamoDB from "../../../utils/dynamoDB";
+import * as dynamoDB from "../../../database/dynamoDB";
 import { handleCreateCustomer } from "../../../handlers/createCustomer";
 
 // Mock de uuidv4 para retornar um id fixo
