@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --watch",
+    "coverage": "jest --coverage",
     "start": "npm run build && serverless offline",
     "dynamodb:install": "sls dynamodb install"
   },
