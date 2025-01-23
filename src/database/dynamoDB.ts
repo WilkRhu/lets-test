@@ -10,15 +10,6 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { createUpdateExpression } from "../utils/dynamoDBConverter";
 
-const formatDynamoValue = (value: any) => {
-  if (typeof value === "string") return { S: value };
-  if (typeof value === "boolean") return { BOOL: value };
-  if (typeof value === "number") return { N: value.toString() };
-  if (Array.isArray(value)) return { L: value.map((v) => ({ S: v })) };
-  if (typeof value === "object") return { M: value };
-  return null;
-};
-
 const client = new DynamoDBClient({
   region: "us-east-2",
   endpoint: process.env.DYNAMODB_ENDPOINT || "http://localhost:8000",
@@ -27,58 +18,6 @@ const client = new DynamoDBClient({
     secretAccessKey: "fakeSecretAccessKey",
   },
 });
-
-const testConnection = async () => {
-  try {
-    const data = await client.send(new ListTablesCommand({}));
-    console.log(
-      "Conectado ao DynamoDB Local com sucesso! Tabelas:",
-      data.TableNames
-    );
-  } catch (error) {
-    console.error("Erro ao conectar com o DynamoDB Local:", error);
-  }
-};
-
-const createTableIfNotExist = async (tableName: string) => {
-  try {
-    const listTablesCommand = new ListTablesCommand({});
-    const data = await client.send(listTablesCommand);
-
-    // Verificar se a tabela já existe
-    if (data.TableNames && data.TableNames.includes(tableName)) {
-      console.log(`A tabela "${tableName}" já existe.`);
-      return;
-    }
-
-    const createTableCommand = new CreateTableCommand({
-      TableName: tableName,
-      KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
-      AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
-      ProvisionedThroughput: {
-        ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5,
-      },
-    });
-
-    await client.send(createTableCommand);
-    console.log(`Tabela "${tableName}" criada com sucesso.`);
-  } catch (error) {
-    console.error(`Erro ao criar a tabela "${tableName}":`, error);
-  }
-};
-
-const createTablesIfNotExist = async (tableNames: string[]) => {
-  for (const tableName of tableNames) {
-    await createTableIfNotExist(tableName);
-  }
-};
-
-const tablesToCreate = ["Customers"];
-
-testConnection();
-
-createTablesIfNotExist(tablesToCreate);
 
 export const putItem = async (tableName: string, item: any) => {
   try {
