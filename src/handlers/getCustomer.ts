@@ -6,7 +6,6 @@ export const getCustomerHandler = async (event: any) => {
   try {
     const response = await getItemService("Customers", customerId);
 
-    // Se o item não for encontrado, responder com status 404
     if (response.statusCode === 404) {
       return {
         statusCode: 404,
