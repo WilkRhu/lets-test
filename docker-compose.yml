@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  dynamodb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./dynamodb-data:/home/dynamodblocal/data
+      - ./dynamodb-init:/home/dynamodblocal/seed
+    environment:
+      - AWS_REGION=us-east-1
+    command: ["java", "-Djava.library.path=./DynamoDBLocal_lib", "-jar", "DynamoDBLocal.jar", "-sharedDb"]

@@ -1,0 +1,76 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: wilkcaetano
+service: customer-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+  
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true  
+
+functions:
+  createCustomer:
+    handler: src/handlers/createCustomer.handleCreateCustomer
+    events:
+      - http:
+          path: customers
+          method: post
+
+  getAllCustomer:
+    handler: src/handlers/getAllCustomer.getAllHandler
+    events:
+      - http:
+          path: customers
+          method: get        
+
+  getCustomer:
+    handler: src/handlers/getCustomer.getCustomerHandler
+    events:
+      - http:
+          path: customers/{id}
+          method: get
+
+  updateCustomer:
+    handler: src/handlers/updateCustomer.updateItemHandler
+    timeout: 60
+    events:
+      - http:
+          path: customers/{id}
+          method: patch
+
+  deleteCustomer:
+    handler: src/handlers/deleteCustomer.deletItemHandler
+    events:
+      - http:
+          path: customers/{id}
+          method: delete
+
+
+resources:
+  Resources:
+    CustomersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: customers
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
