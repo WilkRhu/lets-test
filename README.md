@@ -4,7 +4,7 @@
 3. [Instalação](#instalação)  
    - [Clonar o repositório](#clonar-o-repositório)  
    - [Instalar dependências](#instalar-dependências)
-   - [Configuração do DynamoDB Local](#configuraçao-do-dynamoDB-local)
+   - [Configuração do DynamoDB Local](#configuração-do-dynamodb-local)
 4. [Executando a Aplicação](#executando-a-aplicação)
     - [Instalar o Docker](#instalar-o-docker)
     - [OBS](#obs)
@@ -41,21 +41,21 @@ Antes de começar, certifique-se de ter as seguintes ferramentas instaladas:
 
 ## Instalação
 
-### 1. Clonar o repositório
+### Clonar o repositório
 
 ```bash
 git clone https://github.com/WilkRhu/lets-test
 cd lets-test
 ```
 
-### 2. Instalar dependências
+### Instalar dependências
 
 Primeiro, instale as dependências do projeto. Se estiver usando o yarn:
 
 ```bash
 yarn install
 ```
-#### 4. Configuração do DynamoDB Local
+#### Configuração do DynamoDB Local
 
 Se você não tem um arquivo .env configurado, crie um para armazenar suas variáveis de ambiente necessárias, como credenciais do AWS, caso necessário. Exemplo de arquivo .env:
 
@@ -67,7 +67,7 @@ DYNAMODB_LOCAL_PORT=8000
 
 ## Executando a Aplicação
 
-### . Instalar o Docker
+### Instalar o Docker
 Caso ainda não tenha o Docker instalado, siga os seguintes passos:
 
 Ubuntu:
@@ -89,7 +89,7 @@ docker-compose up
 ### OBS
 Existe uma lógica no projeto para criar a tabela então não precisa criar a tabela no banco
 
-### 1. Rodar a aplicação
+### Rodar a aplicação
 
 Após configurar o DynamoDB local, você pode rodar a aplicação com o seguinte comando:
 
@@ -97,7 +97,7 @@ Após configurar o DynamoDB local, você pode rodar a aplicação com o seguinte
 yarn run start
 ```
 
-### 2. Executando os testes
+### Executando os testes
 
 Os testes unitários e de integração são escritos usando Jest. Para rodar os testes, utilize o comando:
 
@@ -105,11 +105,11 @@ Os testes unitários e de integração são escritos usando Jest. Para rodar os 
 yarn run test
 ```
 
-### 4. Acessando a API
+### Acessando a API
 
 Sua aplicação expõe endpoints via API Gateway local, e você pode interagir com a API utilizando ferramentas como Postman ou cURL. Abaixo estão exemplos de requisições para as principais rotas da sua aplicação.
 
-#### 1. Recuperar todos os itens
+####  Recuperar todos os itens
 
 Método: GET
 
@@ -148,7 +148,7 @@ Resposta esperada (sucesso):
 }
 ```
 
-#### 2. Recuperar um item específico
+#### Recuperar um item específico
 
 Método: GET
 
@@ -223,7 +223,7 @@ Resposta esperada (sucesso):
 }
 ```
 
-#### 3. Criar um novo item
+####  Criar um novo item
 
 Método: POST
 
@@ -320,7 +320,7 @@ Resposta esperada (sucesso):
 }
 ```
 
-#### 4.Atualizar um novo item
+#### Atualizar um novo item
 
 Método: PUT
 
@@ -445,7 +445,7 @@ Resposta esperada (sucesso):
 }
 ```
 
-#### 5. Deletar um item
+#### Deletar um item
 
 Método: DELETE
 
