@@ -1,6 +1,6 @@
 # Sumário
 1. [Tecnologiad usadas](#tecnologias-usadas)  
-2. [Pré-requisitos](#pre-requisitos)  
+2. [Pré-requisitos](#pré-requisitos)  
 3. [Instalação](#instalacao)  
    - [Clonar o repositório](#clonaro-repositório)  
    - [Instalar dependências](#instalar-dependencias)
