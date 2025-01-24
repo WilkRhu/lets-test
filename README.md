@@ -88,6 +88,11 @@ docker-compose up
 ```
 ### OBS
 Existe uma lógica no projeto para criar a tabela então não precisa criar a tabela no banco
+Não esquecer de trocar o org em serverless.yml
+```yml 
+org: wilkcaetano
+service: customer-api
+```
 
 ### Rodar a aplicação
 
