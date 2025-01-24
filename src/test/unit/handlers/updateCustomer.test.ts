@@ -1,5 +1,5 @@
 import * as dynamoDB from "../../../database/dynamoDB";
-import { updateCustomerService } from "../../../services/CustomerService";
+import { updateCustomerService } from "../../../services/customerService";
 import { mockUpdatedAttributes, updatedData } from "../../mocks/user/update";
 
 jest.mock("../../../database/dynamoDB", () => ({

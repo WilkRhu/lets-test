@@ -1,35 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const CustomerService_1 = require("../../../services/CustomerService");
-const dynamoDB_1 = require("../../../database/dynamoDB"); // Importando o mock do repositório
-jest.mock("../../../utils/dynamoDB", () => ({
-    deleteItem: jest.fn(),
-}));
+// src/test/unit/handlers/deleteCustomer.test.ts
+const customerService_1 = require("../../../services/customerService");
+const database_1 = require("../../mocks/database");
+const common_1 = require("../../utils/common");
 describe("deleteCustomerService", () => {
-    const customerId = "mock-customer-id";
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-    it("should delete the customer successfully and return 200", async () => {
-        dynamoDB_1.deleteItem.mockResolvedValueOnce(undefined);
-        const result = await (0, CustomerService_1.deleteCustomerService)(customerId);
-        expect(dynamoDB_1.deleteItem).toHaveBeenCalledWith("Customers", { id: { S: customerId } });
-        expect(result).toEqual({
-            statusCode: 200,
-            body: JSON.stringify({
-                message: `Cliente com id ${customerId} deletado com sucesso.`,
-            }),
-        });
-    });
-    it("should return 500 if deleteItem fails", async () => {
-        dynamoDB_1.deleteItem.mockRejectedValueOnce(new Error("DynamoDB error"));
-        const result = await (0, CustomerService_1.deleteCustomerService)(customerId);
-        expect(result).toEqual({
-            statusCode: 500,
-            body: JSON.stringify({
-                message: `Erro ao tentar deletar o cliente com id ${customerId}.`,
-                error: {},
-            }),
-        });
+    it("should handle customer not found (404)", async () => {
+        const customerId = (0, common_1.generateCustomerId)();
+        // Simula que o cliente não foi encontrado
+        database_1.mockGetItem.mockResolvedValueOnce(null);
+        const response = await (0, customerService_1.deleteCustomerService)(customerId);
+        expect(response.statusCode).toBe(404);
+        expect(JSON.parse(response.body).message).toBe(`Customer with id ${customerId} not found.`);
     });
 });

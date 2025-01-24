@@ -1,4 +1,4 @@
-import { updateCustomerService } from "../services/CustomerService";
+import { updateCustomerService } from "../services/customerService";
 
 export const updateItemHandler = async (event: any) => {
   const customerId = event.pathParameters?.id;

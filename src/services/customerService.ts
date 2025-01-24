@@ -25,7 +25,6 @@ export const createCustomer = async (customerData: Customer) => {
       }),
     };
   } catch (error) {
-    console.error("Error creating customer:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: "Failed to create customer", error }),
@@ -33,29 +32,23 @@ export const createCustomer = async (customerData: Customer) => {
   }
 };
 
-export const getAllItemService = async (tableName: string) => {
+export const getAllItemService = async (tableName: string): Promise<any> => {
   try {
     const items = await getAllItems(tableName);
-
     if (items.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: "No items found." }),
+        body: { message: "No items found." },
       };
     }
-
     return {
       statusCode: 200,
       body: items,
     };
   } catch (error) {
-    console.error("Error retrieving items:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        message: "Failed to retrieve items",
-        error: error,
-      }),
+      body: { message: "Failed to retrieve items", error },
     };
   }
 };
@@ -70,7 +63,6 @@ export const getItemService = async (tableName: string, key: any) => {
 
     return { statusCode: 200, item };
   } catch (error) {
-    console.error("Error in getItemService:", error);
     return { statusCode: 500, message: "Failed to retrieve item", error };
   }
 };
@@ -78,8 +70,6 @@ export const getItemService = async (tableName: string, key: any) => {
 export const deleteCustomerService = async (customerId: string) => {
   try {
     const key = { id: { S: customerId } };
-
-    console.log("Fetching customer with id:", customerId);
     const customer = await getItem("Customers", { id: { S: customerId } });
     if (!customer) {
       return {
@@ -90,10 +80,7 @@ export const deleteCustomerService = async (customerId: string) => {
       };
     }
 
-    console.log("Customer fetched:", customer);
-
     if (!customer) {
-      console.log(`Customer with id ${customerId} not found.`);
       return {
         statusCode: 404,
         body: JSON.stringify({
@@ -102,7 +89,6 @@ export const deleteCustomerService = async (customerId: string) => {
       };
     }
 
-    console.log("Deleting customer with id:", customerId);
     await deleteItem("Customers", key);
 
     return {
@@ -112,7 +98,6 @@ export const deleteCustomerService = async (customerId: string) => {
       }),
     };
   } catch (error) {
-    console.error("Error deleting item:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -129,6 +114,14 @@ export const updateCustomerService = async (
 ) => {
   try {
     const key = { id: { S: `${customerId}` } };
+    const item = await getItem("Customers", key);
+    if (!item) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: "Customer not found" }),
+      };
+    }
+
     const updatedAttributes = await updateItem("Customers", key, updatedData);
 
     return {
@@ -139,7 +132,6 @@ export const updateCustomerService = async (
       }),
     };
   } catch (error) {
-    console.error("Error updating customer:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({

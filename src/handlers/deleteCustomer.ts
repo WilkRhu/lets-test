@@ -1,4 +1,4 @@
-import { deleteCustomerService } from "../services/CustomerService";
+import { deleteCustomerService } from "../services/customerService";
 
 export const deletItemHandler = async (event: any) => {
     const customerId = event.pathParameters?.id; 

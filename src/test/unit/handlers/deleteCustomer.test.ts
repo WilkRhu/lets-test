@@ -1,5 +1,5 @@
 // src/test/unit/handlers/deleteCustomer.test.ts
-import { deleteCustomerService } from "../../../services/CustomerService";
+import { deleteCustomerService } from "../../../services/customerService";
 import { mockGetItem, mockDeleteItem } from "../../mocks/database";
 import { generateCustomerId } from "../../utils/common";
 
