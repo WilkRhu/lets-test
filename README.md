@@ -1,3 +1,22 @@
+# Sumário
+1. [Tecnologiad usadas](#tecnologias-usadas)  
+2. [Pré-requisitos](#pre-requisitos)  
+3. [Instalação](#instalacao)  
+   - [Clonar o repositório](#clonaro-repositório)  
+   - [Instalar dependências](#instalar-dependencias)
+   - [Configuração do DynamoDB Local](#configuracao-do-dynamoDB-local)
+4. [Executando a Aplicação](#executando-a-aplicação)
+    - [Instalar o Docker](#instalar-o-docker)
+    - [OBS](#obs)
+5. [Rodar a aplicação](#rodar-a-aplicação)  
+6. [Executando os testes](#executando-os-testes)
+7. [Acessando a API](#acessando-a-api)
+    - [Recuperar todos os itens](#recuperar-todos-os-itens)
+    - [Recuperar um item específico](#recuperar-um-item-específico)
+    - [Criar um novo item](#criar-um-novo-item)
+    - [Atualizar um novo item](#atualizar-um-novo-item)
+    - [Deletar um item](#deletar-um-item)
+
 # Lets Test
 
 Este projeto é uma aplicação desenvolvida para testar interações com o DynamoDB local, utilizando o Serverless Framework, Node.js, e outras tecnologias modernas.
@@ -36,15 +55,6 @@ Primeiro, instale as dependências do projeto. Se estiver usando o yarn:
 ```bash
 yarn install
 ```
-
-### 3. Instalar o DynamoDB Local
-
-Para rodar o DynamoDB localmente, instale o plugin serverless-dynamodb-local:
-
-```bash
-yarn add serverless-dynamodb-local --dev
-```
-
 #### 4. Configuração do DynamoDB Local
 
 Se você não tem um arquivo .env configurado, crie um para armazenar suas variáveis de ambiente necessárias, como credenciais do AWS, caso necessário. Exemplo de arquivo .env:
@@ -54,16 +64,6 @@ AWS_ACCESS_KEY_ID=your-access-key-id
 AWS_SECRET_ACCESS_KEY=your-secret-access-key
 DYNAMODB_LOCAL_PORT=8000
 ```
-
-### 5. Iniciar o DynamoDB Local
-
-Execute o DynamoDB Local usando o Serverless Framework:
-
-```bash
-yarn serverless dynamodb start
-```
-
-Isso irá iniciar o DynamoDB localmente na porta configurada (por padrão, 8000).
 
 ## Executando a Aplicação
 
@@ -320,7 +320,7 @@ Resposta esperada (sucesso):
 }
 ```
 
-#### 4. Atualizar um item
+#### 4.Atualizar um novo item
 
 Método: PUT
 
