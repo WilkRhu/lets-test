@@ -1,5 +1,11 @@
+import { AttributeValue } from "@aws-sdk/client-dynamodb";
 import * as dynamoDB from "../../../database/dynamoDB";
-import { updateCustomerService } from "../../../services/customerService";
+import { updateItemHandler } from "../../../handlers/updateCustomer";
+import {
+  getItemService,
+  updateCustomerService,
+} from "../../../services/customerService";
+import { customerData, expectedDynamoItem } from "../../mocks/user/create";
 import { mockUpdatedAttributes, updatedData } from "../../mocks/user/update";
 
 jest.mock("../../../database/dynamoDB", () => ({
@@ -8,7 +14,6 @@ jest.mock("../../../database/dynamoDB", () => ({
 
 describe("updateCustomerService", () => {
   const customerId = "mock-id";
-  
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -18,19 +23,19 @@ describe("updateCustomerService", () => {
     (dynamoDB.updateItem as jest.Mock).mockResolvedValueOnce(
       mockUpdatedAttributes
     );
+    const event = {
+      pathParameters: {
+        id: "mock-id",
+      },
+      body: JSON.stringify(updatedData),
+    };
 
-    const result = await updateCustomerService(customerId, updatedData);
-
-    expect(dynamoDB.updateItem).toHaveBeenCalledWith(
-      "Customers",
-      { id: { S: customerId } },
-      updatedData
-    );
+    const result = await updateItemHandler(event);
 
     expect(result).toEqual({
       statusCode: 200,
       body: JSON.stringify({
-        message: `Customer with id ${customerId} updated successfully.`,
+        message: "Customer with id mock-id updated successfully.",
         updatedAttributes: mockUpdatedAttributes,
       }),
     });
@@ -49,5 +54,30 @@ describe("updateCustomerService", () => {
         error: "Error: DynamoDB error",
       }),
     });
+  });
+
+  it("should error 400 if update fails ID required", async () => {
+    const event = {
+      body: JSON.stringify(updatedData),
+    };
+    const result = await updateItemHandler(event);
+    expect(result).toEqual({
+      statusCode: 400,
+      body: '{"message":"Customer ID is required."}'
+    })
+  });
+
+  it("should error 400 if update fails body required", async () => {
+    const event = {
+      pathParameters: {
+        id: "mock-id",
+      },
+      body: JSON.stringify(""),
+    };
+    const result = await updateItemHandler(event);
+    expect(result).toEqual({
+      statusCode: 400,
+      body: '{"message":"No update data provided."}'
+    })
   });
 });

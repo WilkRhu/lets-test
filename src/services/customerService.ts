@@ -113,15 +113,15 @@ export const updateCustomerService = async (
   updatedData: any
 ) => {
   try {
-    const key = { id: { S: `${customerId}` } };
-    const item = await getItem("Customers", key);
+    const item = await getItemService("Customers", customerId);
     if (!item) {
       return {
         statusCode: 404,
         body: JSON.stringify({ message: "Customer not found" }),
       };
     }
-
+    
+    const key = { id: { S: `${customerId}` } };
     const updatedAttributes = await updateItem("Customers", key, updatedData);
 
     return {

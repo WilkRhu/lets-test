@@ -13,13 +13,6 @@ jest.mock("../../../database/dynamoDB", () => ({
 }));
 
 describe("handleCreateCustomer", () => {
-
-
-  const mockCustomerWithId = {
-    ...customerData,
-    id: "mock-id", 
-  };
-
   beforeEach(() => {
     jest.clearAllMocks(); 
     (uuidv4 as jest.Mock).mockReturnValue("mock-id"); 

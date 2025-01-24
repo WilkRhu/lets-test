@@ -11,6 +11,7 @@ module.exports = {
   collectCoverageFrom: [
     "src/**/*.{ts,js}", 
     "!src/**/*.test.ts",
+    "!src/test/mocks/**"
   ],
   coverageDirectory: "./coverage", 
   testMatch: [

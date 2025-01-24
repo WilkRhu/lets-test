@@ -8,7 +8,7 @@ export const updateItemHandler = async (event: any) => {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: "O ID do cliente é obrigatório.",
+        message: "Customer ID is required.",
       }),
     };
   }

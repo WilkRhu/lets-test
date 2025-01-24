@@ -11,7 +11,6 @@ describe("deleteCustomerService", () => {
   it("should handle customer not found (404)", async () => {
     const customerId = generateCustomerId();
 
-    // Simula que o cliente não foi encontrado
     mockGetItem.mockResolvedValueOnce(null);
 
     const response = await deleteCustomerService(customerId);

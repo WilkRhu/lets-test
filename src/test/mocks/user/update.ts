@@ -1,3 +1,5 @@
+import { AttributeValue } from "@aws-sdk/client-dynamodb";
+
 interface Address {
     street: string;
     city: string;
@@ -16,7 +18,6 @@ interface Address {
     contacts: Contact[];
   }
   
-  // Define os tipos para os atributos no DynamoDB
   type DynamoDBString = { S: string };
   type DynamoDBBoolean = { BOOL: boolean };
   type DynamoDBList = { L: DynamoDBMap[] };
@@ -39,7 +40,9 @@ export const updatedData: UpdatedData = {
     contacts: [{ phone: "+9876543210", email: "updated@example.com" }],
   };
   
-  export const mockUpdatedAttributes: MockUpdatedAttributes = {
+
+  
+  export const mockUpdatedAttributes: Record<string, AttributeValue> = {
     id: { S: "mock-id" },
     name: { S: "Updated John Doe" },
     birthDate: { S: "1991-01-01" },
@@ -65,3 +68,4 @@ export const updatedData: UpdatedData = {
       ],
     },
   };
+  
