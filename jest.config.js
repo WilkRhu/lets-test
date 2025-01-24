@@ -14,4 +14,5 @@ module.exports = {
     "!src/**/*spec.js" 
   ],
   coverageDirectory: "../coverage",
+  setupFilesAfterEnv: ['<rootDir>test/config/setup.ts'],
 };

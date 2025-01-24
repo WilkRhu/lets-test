@@ -11,16 +11,16 @@ export const getAllHandler = async (event: APIGatewayEvent, context: Context) =>
       return {
         statusCode: 200,
         body: JSON.stringify({
-          message: "Itens recuperados com sucesso",
+          message: "Items successfully recovered",
           items: items,
         }),
       };
     } catch (error) {
-      console.error("Erro ao recuperar itens:", error);
+      console.error("Error retrieving items:", error);
       return {
         statusCode: 500,
         body: JSON.stringify({
-          message: "Erro ao recuperar itens",
+          message: "Error retrieving items",
           error: error,
         }),
       };

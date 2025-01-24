@@ -6,10 +6,7 @@ import {
   putItem,
   updateItem,
 } from "../database/dynamoDB";
-import {
-  convertFromDynamoFormat,
-  convertToDynamoFormat,
-} from "../utils/dynamoDBConverter";
+import { convertToDynamoFormat } from "../utils/dynamoDBConverter";
 import { v4 as uuidv4 } from "uuid";
 
 export const createCustomer = async (customerData: Customer) => {
@@ -43,7 +40,7 @@ export const getAllItemService = async (tableName: string) => {
     if (items.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: "Nenhum item encontrado." }),
+        body: JSON.stringify({ message: "No items found." }),
       };
     }
 
@@ -52,11 +49,11 @@ export const getAllItemService = async (tableName: string) => {
       body: items,
     };
   } catch (error) {
-    console.error("Erro ao recuperar os itens:", error);
+    console.error("Error retrieving items:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: "Erro ao recuperar os itens",
+        message: "Failed to retrieve items",
         error: error,
       }),
     };
@@ -82,53 +79,73 @@ export const deleteCustomerService = async (customerId: string) => {
   try {
     const key = { id: { S: customerId } };
 
+    console.log("Fetching customer with id:", customerId);
+    const customer = await getItem("Customers", { id: { S: customerId } });
+    if (!customer) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          message: `Customer with id ${customerId} not found.`,
+        }),
+      };
+    }
+
+    console.log("Customer fetched:", customer);
+
+    if (!customer) {
+      console.log(`Customer with id ${customerId} not found.`);
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          message: `Customer with id ${customerId} not found.`,
+        }),
+      };
+    }
+
+    console.log("Deleting customer with id:", customerId);
     await deleteItem("Customers", key);
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Cliente com id ${customerId} deletado com sucesso.`,
+        message: `Customer with id ${customerId} deleted successfully.`,
       }),
     };
   } catch (error) {
-    console.error("Erro ao deletar o item:", error);
+    console.error("Error deleting item:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: `Erro ao tentar deletar o cliente com id ${customerId}.`,
+        message: `Failed to delete customer with id ${customerId}.`,
         error: error,
       }),
     };
   }
 };
 
-export const updateCustomerService = async (customerId: string, updatedData: any) => {
+export const updateCustomerService = async (
+  customerId: string,
+  updatedData: any
+) => {
   try {
     const key = { id: { S: `${customerId}` } };
-    
-    // Chamando a função de atualização com os dados fornecidos
-    const updatedAttributes = await updateItem(
-      "Customers",
-      key,
-      updatedData
-    );
+    const updatedAttributes = await updateItem("Customers", key, updatedData);
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Cliente com id ${customerId} atualizado com sucesso.`,
+        message: `Customer with id ${customerId} updated successfully.`,
         updatedAttributes,
       }),
     };
   } catch (error) {
-    console.error('Erro ao atualizar o cliente:', error);
+    console.error("Error updating customer:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: `Erro ao tentar atualizar o cliente com id ${customerId}.`,
+        message: `Failed to update customer with id ${customerId}.`,
         error: `${error}`,
       }),
     };
   }
 };
-
