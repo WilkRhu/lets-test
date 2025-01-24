@@ -4,8 +4,6 @@ import {
   GetItemCommand,
   DeleteItemCommand,
   UpdateItemCommand,
-  ListTablesCommand,
-  CreateTableCommand,
   ScanCommand,
 } from "@aws-sdk/client-dynamodb";
 import { createUpdateExpression } from "../utils/dynamoDBConverter";

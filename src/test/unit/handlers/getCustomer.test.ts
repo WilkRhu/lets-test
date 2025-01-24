@@ -22,7 +22,6 @@ describe("getCustomerHandler", () => {
       isActive: { BOOL: true },
     };
 
-    // Configura o mock do service
     (getItemService as jest.Mock).mockResolvedValue({
       statusCode: 200,
       item: mockCustomer,
@@ -40,7 +39,6 @@ describe("getCustomerHandler", () => {
       pathParameters: { id: mockCustomerId },
     };
 
-    // Configura o mock do service para retornar 404
     (getItemService as jest.Mock).mockResolvedValue({
       statusCode: 404,
       message: "Item not found",
