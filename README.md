@@ -25,7 +25,7 @@ Antes de começar, certifique-se de ter as seguintes ferramentas instaladas:
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/yourusername/lets-test.git
+git clone https://github.com/WilkRhu/lets-test
 cd lets-test
 ```
 
@@ -66,6 +66,28 @@ yarn serverless dynamodb start
 Isso irá iniciar o DynamoDB localmente na porta configurada (por padrão, 8000).
 
 ## Executando a Aplicação
+
+### . Instalar o Docker
+Caso ainda não tenha o Docker instalado, siga os seguintes passos:
+
+Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install docker.io
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+Mac / Windows:
+```
+Vá até Docker Desktop e baixe o instalador.
+
+O projeto possui um Dockerfile e um docker-compose instalado para subir o dynamodb então só precisa rodar:
+
+```bash
+docker-compose up
+```
+### OBS
+Existe uma lógica no projeto para criar a tabela então não precisa criar a tabela no banco
 
 ### 1. Rodar a aplicação
 
@@ -458,3 +480,5 @@ PUT /dev/customers/{id}: Atualiza um item existente na tabela Customers.
 DELETE /dev/customers/{id}: Deleta um item da tabela Customers.
 Testando a API
 Você pode usar Postman ou cURL para testar todos os endpoints da sua API. Se você deseja automatizar os testes, pode utilizar bibliotecas como Jest para executar testes de integração diretamente no código.
+
+
