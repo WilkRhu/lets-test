@@ -1,13 +1,20 @@
-FROM node:20
+# Use uma imagem base com suporte ao DynamoDB Local
+FROM openjdk:8-jdk-slim
 
-WORKDIR /usr/src/app
+# Instale as dependências necessárias
+RUN apt-get update && apt-get install -y curl unzip awscli \
+    && curl -L -o dynamodb.zip https://s3.us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.zip \
+    && unzip dynamodb.zip -d /dynamodb-local \
+    && rm dynamodb.zip
 
-COPY package*.json ./
+# Defina o diretório de trabalho
+WORKDIR /dynamodb-local
 
-RUN npm install
+# Copie o script para dentro do contêiner
+COPY dynamodb-init/create-tables.sh /dynamodb-local/create-tables.sh
 
-COPY . .
+# Dê permissão para executar o script
+RUN chmod +x /dynamodb-local/create-tables.sh
 
-EXPOSE 3000
-
-CMD ["npx", "serverless", "offline", "start"]
+# Inicia o DynamoDB Local e cria as tabelas
+CMD ["sh", "-c", "java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb & sleep 5 && ./create-tables.sh"]

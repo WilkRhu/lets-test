@@ -5,11 +5,8 @@ import {
   getItem,
   putItem,
   updateItem,
-} from "../utils/dynamoDB";
-import {
-  convertFromDynamoFormat,
-  convertToDynamoFormat,
-} from "../utils/dynamoDBConverter";
+} from "../database/dynamoDB";
+import { convertToDynamoFormat } from "../utils/dynamoDBConverter";
 import { v4 as uuidv4 } from "uuid";
 
 export const createCustomer = async (customerData: Customer) => {
@@ -28,7 +25,6 @@ export const createCustomer = async (customerData: Customer) => {
       }),
     };
   } catch (error) {
-    console.error("Error creating customer:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: "Failed to create customer", error }),
@@ -36,29 +32,23 @@ export const createCustomer = async (customerData: Customer) => {
   }
 };
 
-export const getAllItemService = async (tableName: string) => {
+export const getAllItemService = async (tableName: string): Promise<any> => {
   try {
     const items = await getAllItems(tableName);
-
     if (items.length === 0) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ message: "Nenhum item encontrado." }),
+        body: { message: "No items found." },
       };
     }
-
     return {
       statusCode: 200,
       body: items,
     };
   } catch (error) {
-    console.error("Erro ao recuperar os itens:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        message: "Erro ao recuperar os itens",
-        error: error,
-      }),
+      body: { message: "Failed to retrieve items", error },
     };
   }
 };
@@ -73,7 +63,6 @@ export const getItemService = async (tableName: string, key: any) => {
 
     return { statusCode: 200, item };
   } catch (error) {
-    console.error("Error in getItemService:", error);
     return { statusCode: 500, message: "Failed to retrieve item", error };
   }
 };
@@ -81,54 +70,74 @@ export const getItemService = async (tableName: string, key: any) => {
 export const deleteCustomerService = async (customerId: string) => {
   try {
     const key = { id: { S: customerId } };
+    const customer = await getItem("Customers", { id: { S: customerId } });
+    if (!customer) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          message: `Customer with id ${customerId} not found.`,
+        }),
+      };
+    }
+
+    if (!customer) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          message: `Customer with id ${customerId} not found.`,
+        }),
+      };
+    }
 
     await deleteItem("Customers", key);
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Cliente com id ${customerId} deletado com sucesso.`,
+        message: `Customer with id ${customerId} deleted successfully.`,
       }),
     };
   } catch (error) {
-    console.error("Erro ao deletar o item:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: `Erro ao tentar deletar o cliente com id ${customerId}.`,
+        message: `Failed to delete customer with id ${customerId}.`,
         error: error,
       }),
     };
   }
 };
 
-export const updateCustomerService = async (customerId: string, updatedData: any) => {
+export const updateCustomerService = async (
+  customerId: string,
+  updatedData: any
+) => {
   try {
     const key = { id: { S: `${customerId}` } };
-    
-    // Chamando a função de atualização com os dados fornecidos
-    const updatedAttributes = await updateItem(
-      "Customers",
-      key,
-      updatedData
-    );
+    const item = await getItem("Customers", key);
+    if (!item) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: "Customer not found" }),
+      };
+    }
+
+    const updatedAttributes = await updateItem("Customers", key, updatedData);
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Cliente com id ${customerId} atualizado com sucesso.`,
+        message: `Customer with id ${customerId} updated successfully.`,
         updatedAttributes,
       }),
     };
   } catch (error) {
-    console.error('Erro ao atualizar o cliente:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: `Erro ao tentar atualizar o cliente com id ${customerId}.`,
+        message: `Failed to update customer with id ${customerId}.`,
         error: `${error}`,
       }),
     };
   }
 };
-

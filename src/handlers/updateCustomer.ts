@@ -1,8 +1,8 @@
-import { updateCustomerService } from "../services/CustomerService";
+import { updateCustomerService } from "../services/customerService";
 
 export const updateItemHandler = async (event: any) => {
   const customerId = event.pathParameters?.id;
-  const updatedData = JSON.parse(event.body); // Verifica se o body é JSON
+  const updatedData = JSON.parse(event.body); 
 
   if (!customerId) {
     return {
@@ -17,7 +17,7 @@ export const updateItemHandler = async (event: any) => {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: "Nenhum dado para atualização fornecido.",
+        message: "No update data provided.",
       }),
     };
   }

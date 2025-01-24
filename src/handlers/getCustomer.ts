@@ -1,10 +1,18 @@
-import { getItemService } from "../services/CustomerService";
+import { getItemService } from "../services/customerService";
 
 export const getCustomerHandler = async (event: any) => {
-  const customerId = event.pathParameters.id; // Obtém o ID da URL (por exemplo, /customer/{id})
+  const customerId = event.pathParameters.id;
 
   try {
     const response = await getItemService("Customers", customerId);
+
+    // Se o item não for encontrado, responder com status 404
+    if (response.statusCode === 404) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: response.message }),
+      };
+    }
 
     return {
       statusCode: response.statusCode,

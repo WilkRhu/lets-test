@@ -1,25 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllHandler = void 0;
-const CustomerService_1 = require("../services/CustomerService");
+const customerService_1 = require("../services/customerService");
 const getAllHandler = async (event, context) => {
     try {
         const tableName = "Customers";
-        const items = await (0, CustomerService_1.getAllItemService)(tableName);
+        const { statusCode, body } = await (0, customerService_1.getAllItemService)(tableName);
+        if (statusCode === 200) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify({
+                    message: "Items successfully recovered",
+                    items: body,
+                }),
+            };
+        }
         return {
-            statusCode: 200,
+            statusCode: statusCode,
             body: JSON.stringify({
-                message: "Itens recuperados com sucesso",
-                items: items,
+                message: body.message,
             }),
         };
     }
     catch (error) {
-        console.error("Erro ao recuperar itens:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({
-                message: "Erro ao recuperar itens",
+                message: "Error retrieving items",
                 error: error,
             }),
         };

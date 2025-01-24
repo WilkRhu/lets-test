@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateItemHandler = void 0;
-const CustomerService_1 = require("../services/CustomerService");
+const customerService_1 = require("../services/customerService");
 const updateItemHandler = async (event) => {
     const customerId = event.pathParameters?.id;
-    const updatedData = JSON.parse(event.body); // Verifica se o body é JSON
+    const updatedData = JSON.parse(event.body);
     if (!customerId) {
         return {
             statusCode: 400,
@@ -17,11 +17,11 @@ const updateItemHandler = async (event) => {
         return {
             statusCode: 400,
             body: JSON.stringify({
-                message: "Nenhum dado para atualização fornecido.",
+                message: "No update data provided.",
             }),
         };
     }
-    const response = await (0, CustomerService_1.updateCustomerService)(customerId, updatedData);
+    const response = await (0, customerService_1.updateCustomerService)(customerId, updatedData);
     return response;
 };
 exports.updateItemHandler = updateItemHandler;

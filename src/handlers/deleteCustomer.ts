@@ -1,4 +1,4 @@
-import { deleteCustomerService } from "../services/CustomerService";
+import { deleteCustomerService } from "../services/customerService";
 
 export const deletItemHandler = async (event: any) => {
     const customerId = event.pathParameters?.id; 
@@ -7,7 +7,7 @@ export const deletItemHandler = async (event: any) => {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: "O ID do cliente é obrigatório.",
+        message: "Customer ID is required.",
       }),
     };
   }
